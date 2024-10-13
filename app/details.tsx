@@ -17,35 +17,96 @@ export default function DetailsScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         <Image source={headerImage} style={styles.backgroundImage} />
-        <View style={styles.contentContainer}>
+        <View style={styles.contentContainer} accessible={true}>
           <View style={styles.topContent}>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.description}>
+            <Text
+              style={styles.title}
+              accessible={true}
+              accessibilityLabel={`${title}`}
+            >
+              {title}
+            </Text>
+            <Text
+              style={styles.description}
+              accessible={true}
+              accessibilityLabel={`${description}`}
+            >
               {description}
             </Text>
           </View>
           <View style={styles.bottomContent}>
             <View style={styles.crewContainer}>
               <View style={styles.crewMember}>
-                <Text style={styles.crewRole}>Director</Text>
-                <Text style={styles.crewName}>Chris Traganos</Text>
+                <Text
+                  style={styles.crewRole}
+                  accessible={true}
+                  accessibilityLabel="Director"
+                >
+                  Director
+                </Text>
+                <Text
+                  style={styles.crewName}
+                  accessible={true}
+                  accessibilityLabel="Chris Traganos"
+                >
+                  Chris Traganos
+                </Text>
               </View>
               <View style={styles.crewMember}>
-                <Text style={styles.crewRole}>Executive Producer</Text>
-                <Text style={styles.crewName}>Gio Laquidara</Text>
+                <Text
+                  style={styles.crewRole}
+                  accessible={true}
+                  accessibilityLabel="Executive Producer"
+                >
+                  Executive Producer
+                </Text>
+                <Text
+                  style={styles.crewName}
+                  accessible={true}
+                  accessibilityLabel="Gio Laquidara"
+                >
+                  Gio Laquidara
+                </Text>
               </View>
               <View style={styles.crewMember}>
-                <Text style={styles.crewRole}>Star</Text>
-                <Text style={styles.crewName}>Eric Fahsl</Text>
+                <Text
+                  style={styles.crewRole}
+                  accessible={true}
+                  accessibilityLabel="Star"
+                >
+                  Star
+                </Text>
+                <Text
+                  style={styles.crewName}
+                  accessible={true}
+                  accessibilityLabel="Eric Fahsl"
+                >
+                  Eric Fahsl
+                </Text>
               </View>
             </View>
-            <SpatialNavigationFocusableView onSelect={() => {router.push('/player')}}>
+            <SpatialNavigationFocusableView
+              onSelect={() => {
+                router.push("/player");
+              }}
+            >
               {({ isFocused }) => (
                 <Pressable
-                  style={[styles.watchButton, isFocused && styles.watchButtonFocused]}
+                  style={[
+                    styles.watchButton,
+                    isFocused && styles.watchButtonFocused,
+                  ]}
                   onPress={() => {}}
                 >
-                  <Text style={isFocused ? styles.watchButtonTextFocused : styles.watchButtonText}>
+                  <Text
+                    accessible={true}
+                    accessibilityLabel="Watch now"
+                    style={
+                      isFocused
+                        ? styles.watchButtonTextFocused
+                        : styles.watchButtonText
+                    }
+                  >
                     Watch now
                   </Text>
                 </Pressable>
@@ -58,7 +119,7 @@ export default function DetailsScreen() {
   );
 }
 
-const useDetailsStyles = function() {
+const useDetailsStyles = function () {
   return StyleSheet.create({
     container: {
       flex: 1,

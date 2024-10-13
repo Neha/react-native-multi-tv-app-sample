@@ -18,32 +18,44 @@ export default function ExploreScreen() {
   const onDirectionHandledWithoutMovement = useCallback(
     (movement: Direction) => {
       console.log("Direction " + movement);
-      if (movement === 'left' && focusedIndex === 0) {
+      if (movement === "left" && focusedIndex === 0) {
         navigation.dispatch(DrawerActions.openDrawer());
         toggleMenu(true);
       }
     },
-    [toggleMenu, focusedIndex, navigation],
+    [toggleMenu, focusedIndex, navigation]
   );
 
-
   return (
-    <SpatialNavigationRoot isActive={isActive}
-      onDirectionHandledWithoutMovement={onDirectionHandledWithoutMovement}>
+    <SpatialNavigationRoot
+      isActive={isActive}
+      onDirectionHandledWithoutMovement={onDirectionHandledWithoutMovement}
+    >
+      accessible={true}
+      accessibilityLabel="Explore Screen"
       <Stack.Screen options={{ headerShown: false }} />
-      <View style={styles.container}>
-      <DefaultFocus>
-        <SpatialNavigationFocusableView>
-          <Text style={styles.title}>Explore Screen</Text>
-         </SpatialNavigationFocusableView>
-      </DefaultFocus>
+      <View
+        style={styles.container}
+        accessible={true}
+        accessibilityLabel="Explore screen main content"
+      >
+        <DefaultFocus>
+          <SpatialNavigationFocusableView>
+            <Text
+              style={styles.title}
+              accessible={true}
+              accessibilityLabel="Explore Screen Title"
+            >
+              Explore Screen
+            </Text>
+          </SpatialNavigationFocusableView>
+        </DefaultFocus>
       </View>
     </SpatialNavigationRoot>
   );
 }
 
-const useExploreStyles = function() {
-
+const useExploreStyles = function () {
   return StyleSheet.create({
     container: {
       flex: 1,

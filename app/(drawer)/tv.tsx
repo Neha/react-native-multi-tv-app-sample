@@ -36,7 +36,8 @@ export default function TVScreen() {
       <View style={styles.container}>
       <DefaultFocus>
       <SpatialNavigationFocusableView>
-        <Text style={styles.title}>TV Screen</Text>
+        <Text style={styles.title} accessible={true}
+              accessibilityLabel="TV Screen">TV Screen</Text>
       </SpatialNavigationFocusableView>
       </DefaultFocus>
       </View>

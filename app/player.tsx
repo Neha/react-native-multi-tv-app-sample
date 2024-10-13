@@ -12,11 +12,11 @@ export default function PlayerScreen() {
   return (
     <SpatialNavigationRoot isActive={isFocused}>
       <Stack.Screen options={{ headerShown: false }} />
-      <View style={styles.container}>
+      <View style={styles.container} accessible={true}>
         <SpatialNavigationFocusableView>
-        <Text style={styles.title}>Video Player</Text>
+        <Text style={styles.title} accessible={true} accessibilityLabel='Video Player'>Video Player</Text>
         </SpatialNavigationFocusableView>
-        <Text style={styles.subtitle}>Your content is loading...</Text>
+        <Text style={styles.subtitle} accessible={true} accessibilityLabel='Your content is loading'>Your content is loading...</Text>
       </View>
     </SpatialNavigationRoot>
   );

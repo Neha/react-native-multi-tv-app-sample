@@ -20,10 +20,13 @@ export default function CustomDrawerContent(props: any) {
   return (
     <SpatialNavigationRoot isActive={isMenuOpen}>
       <DrawerContentScrollView {...props} style={styles.container} scrollEnabled={false}>
-        <View style={styles.header}>
-          <Image source={require('@/assets/images/logo.png')} style={styles.profilePic} />
-          <Text style={styles.userName}>Pioneer Tom</Text>
-          <Text style={styles.switchAccount}>Switch account</Text>
+        <View style={styles.header} accessible={true} accessibilityRole="header">
+          <Image source={require('@/assets/images/logo.png')} style={styles.profilePic} accessible={true}
+    accessibilityLabel="Pioneer Tom's profile picture"/>
+          <Text style={styles.userName} accessible={true}
+              accessibilityLabel="Pioneer Tom">Pioneer Tom</Text>
+          <Text style={styles.switchAccount} accessible={true}
+              accessibilityLabel="Switch account">Switch account</Text>
         </View>
         {drawerItems.map((item, index) => (
          index === 0 ? (
@@ -31,7 +34,8 @@ export default function CustomDrawerContent(props: any) {
             <SpatialNavigationFocusableView onSelect={() => { console.log(item.name); toggleMenu(false); router.push(item.name); }}>
               {({ isFocused }) => (
                 <View style={[styles.menuItem, isFocused && styles.menuItemFocused]}>
-                  <Text style={[styles.menuText, isFocused && styles.menuTextFocused]}>{item.label}</Text>
+                  <Text style={[styles.menuText, isFocused && styles.menuTextFocused]} accessible={true}
+          accessibilityLabel={`${item.label}`}>{item.label}</Text>
                 </View>
               )}
             </SpatialNavigationFocusableView>
@@ -40,7 +44,8 @@ export default function CustomDrawerContent(props: any) {
           <SpatialNavigationFocusableView key={index} onSelect={() => { console.log(item.name); toggleMenu(false);  router.push(item.name); }}>
             {({ isFocused }) => (
               <View style={[styles.menuItem, isFocused && styles.menuItemFocused]}>
-                <Text style={[styles.menuText, isFocused && styles.menuTextFocused]}>{item.label}</Text>
+                <Text style={[styles.menuText, isFocused && styles.menuTextFocused]} accessible={true}
+          accessibilityLabel={`${item.label}`}>{item.label}</Text>
               </View>
             )}
           </SpatialNavigationFocusableView>

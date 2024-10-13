@@ -30,101 +30,163 @@ export default function IndexScreen() {
 
   const focusedItem = useMemo(() => moviesData[focusedIndex], [focusedIndex]);
 
-  const renderHeader = useCallback(() => (
-    <View style={styles.header}>
-      <Image 
-        style={styles.headerImage}
-        source={focusedItem.headerImage}
-        resizeMode="cover"
-      />
-      <LinearGradient
-        colors={['rgba(0,0,0,0.9)', 'rgba(0,0,0,0.7)', 'rgba(0,0,0,0.3)', 'transparent']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.gradient}
-      />
-      <View style={styles.headerTextContainer}>
-        <Text style={styles.headerTitle}>{focusedItem.title}</Text>
-        <Text style={styles.headerDescription}>{focusedItem.description}</Text>
+  const renderHeader = useCallback(
+    () => (
+      <View
+        style={styles.header}
+        accessible={true}
+        accessibilityLabel={`Header: ${focusedItem.title}`}
+      >
+        <Image
+          style={styles.headerImage}
+          source={focusedItem.headerImage}
+          resizeMode="cover"
+          accessible={true}
+          accessibilityLabel={`${focusedItem.title} movie poster`}
+        />
+        <LinearGradient
+          colors={[
+            "rgba(0,0,0,0.9)",
+            "rgba(0,0,0,0.7)",
+            "rgba(0,0,0,0.3)",
+            "transparent",
+          ]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.gradient}
+        />
+        <View style={styles.headerTextContainer}>
+          <Text
+            style={styles.headerTitle}
+            accessible={true}
+            accessibilityLabel={`Title: ${focusedItem.title}`}
+          >
+            {focusedItem.title}
+          </Text>
+          <Text
+            style={styles.headerDescription}
+            accessible={true}
+            accessibilityLabel={`Description: ${focusedItem.description}`}
+          >
+            {focusedItem.description}
+          </Text>
+        </View>
       </View>
-    </View>
-  ), [focusedItem, styles]);
+    ),
+    [focusedItem, styles]
+  );
 
   const onDirectionHandledWithoutMovement = useCallback(
     (movement: Direction) => {
       console.log("Direction " + movement);
-      if (movement === 'left' && focusedIndex === 0) {
+      if (movement === "left" && focusedIndex === 0) {
         navigation.dispatch(DrawerActions.openDrawer());
         toggleMenu(true);
       }
     },
-    [toggleMenu, focusedIndex, navigation],
+    [toggleMenu, focusedIndex, navigation]
   );
 
-  const renderScrollableRow = useCallback((title: string, ref: React.RefObject<FlatList>) => {
-    const renderItem = useCallback(({ item, index }: { item: CardData; index: number }) => (
-      <SpatialNavigationFocusableView
-        onSelect={() => { 
-          router.push({
-            pathname: '/details',
-            params: { 
-              title: item.title,
-              description: item.description,
-              headerImage: item.headerImage
-            }         
-           });
-        }}
-        onFocus={() => setFocusedIndex(index)}
-      >
-        {({ isFocused }) => (
-          <View style={[styles.highlightThumbnail, isFocused && styles.highlightThumbnailFocused]}>
-            <Image source={item.headerImage} style={styles.headerImage} />
-            <View style={styles.thumbnailTextContainer}>
-             <Text style={styles.thumbnailText}>{item.title}</Text>   
-            </View>
-          </View>
-        )}
-      </SpatialNavigationFocusableView>
-    ), [router, styles]);
+  const renderScrollableRow = useCallback(
+    (title: string, ref: React.RefObject<FlatList>) => {
+      const renderItem = useCallback(
+        ({ item, index }: { item: CardData; index: number }) => (
+          <SpatialNavigationFocusableView
+            onSelect={() => {
+              router.push({
+                pathname: "/details",
+                params: {
+                  title: item.title,
+                  description: item.description,
+                  headerImage: item.headerImage,
+                },
+              });
+            }}
+            onFocus={() => setFocusedIndex(index)}
+            accessible={true}
+            accessibilityLabel={`Movie: ${item.title}`}
+            accessibilityHint="Double-tap to view details"
+          >
+            {({ isFocused }) => (
+              <View
+                style={[
+                  styles.highlightThumbnail,
+                  isFocused && styles.highlightThumbnailFocused,
+                ]}
+              >
+                <Image
+                  source={item.headerImage}
+                  style={styles.headerImage}
+                  accessible={true}
+                  accessibilityLabel={`${item.title} movie poster`}
+                />
+                <View style={styles.thumbnailTextContainer}>
+                  <Text
+                    style={styles.thumbnailText}
+                    accessible={true}
+                    accessibilityLabel={`Title: ${item.title}`}
+                  >
+                    {item.title}
+                  </Text>
+                </View>
+              </View>
+            )}
+          </SpatialNavigationFocusableView>
+        ),
+        [router, styles]
+      );
 
-    return (
-      <View style={styles.highlightsContainer}>
-        <Text style={styles.highlightsTitle}>{title}</Text>
+      return (
+        <View style={styles.highlightsContainer}>
+          <Text
+            style={styles.highlightsTitle}
+            accessible={true}
+            accessibilityLabel={`${title} section`}
+          >
+            {title}
+          </Text>
           <SpatialNavigationNode>
-          <DefaultFocus>
-            <SpatialNavigationVirtualizedList 
-              data={moviesData} 
-              orientation="horizontal" 
-              renderItem={renderItem}
-              itemSize={scaledPixels(425)}
-              numberOfRenderedItems={6}
-              numberOfItemsVisibleOnScreen={4}
-              onEndReachedThresholdItemsNumber={3}
+            <DefaultFocus>
+              <SpatialNavigationVirtualizedList
+                data={moviesData}
+                orientation="horizontal"
+                renderItem={renderItem}
+                itemSize={scaledPixels(425)}
+                numberOfRenderedItems={6}
+                numberOfItemsVisibleOnScreen={4}
+                onEndReachedThresholdItemsNumber={3}
               />
             </DefaultFocus>
           </SpatialNavigationNode>
-      </View>
-    );
-  }, [styles]);
+        </View>
+      );
+    },
+    [styles]
+  );
 
   return (
     <SpatialNavigationRoot
       isActive={isActive}
-      onDirectionHandledWithoutMovement={onDirectionHandledWithoutMovement}>
-        <View style={styles.container}>
-        {renderHeader()}       
-        <SpatialNavigationScrollView  
-          offsetFromStart={scaledPixels(60)}  
-          style={styles.scrollContent}>   
+      onDirectionHandledWithoutMovement={onDirectionHandledWithoutMovement}
+      accessible={true}
+      accessibilityLabel="Main movie navigation screen"
+    >
+      <View style={styles.container}>
+        {renderHeader()}
+        <SpatialNavigationScrollView
+          offsetFromStart={scaledPixels(60)}
+          style={styles.scrollContent}
+          accessible={true}
+          accessibilityLabel="Scrollable movie list"
+        >
           {renderScrollableRow("Trending Movies", trendingRef)}
           {renderScrollableRow("Classics", classicsRef)}
           {renderScrollableRow("Hip and Modern", hipAndModernRef)}
         </SpatialNavigationScrollView>
-        </View>
-    </SpatialNavigationRoot> 
+      </View>
+    </SpatialNavigationRoot>
   );
 }
-
 
 const useGridStyles = function () {
   return StyleSheet.create({
@@ -203,7 +265,7 @@ const useGridStyles = function () {
     header: {
       width: '100%',
       height: scaledPixels(700),
-      position: 'relative',
+      position: "relative",
     },
     headerImage: {
       width: '100%',
