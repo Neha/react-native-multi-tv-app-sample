@@ -1,64 +1,97 @@
-import { scaledPixels } from "@/hooks/useScale";
-import { DrawerContentScrollView } from "@react-navigation/drawer";
-import { View, StyleSheet, Image, Platform, Text } from "react-native";
-import { DefaultFocus, SpatialNavigationFocusableView, SpatialNavigationRoot } from "react-tv-space-navigation";
-import { useRouter } from "expo-router";
-import { useMenuContext } from "@/components/MenuContext";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { scaledPixels } from '@/hooks/useScale';
+import { DrawerContentScrollView } from '@react-navigation/drawer';
+import { View, StyleSheet, Image, Platform, Text } from 'react-native';
+import { DefaultFocus, SpatialNavigationFocusableView, SpatialNavigationRoot } from 'react-tv-space-navigation';
+import { useRouter } from 'expo-router';
+import { useMenuContext } from '@/components/MenuContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { lightColors, darkColors } from '@/theme/colors';
+import { useColorScheme } from 'react-native';
+import { useState, useEffect } from 'react';
 
 export default function CustomDrawerContent(props: any) {
   const router = useRouter();
   const { isOpen: isMenuOpen, toggleMenu } = useMenuContext();
-  const styles = useDrawerStyles();
-  const {top, right, bottom, left} = useSafeAreaInsets();
+
+  const { top, right, bottom, left } = useSafeAreaInsets();
   const drawerItems = [
     { name: '/', label: 'Home' },
-    { name: 'explore', label: 'Explore'},
-    { name: 'tv', label: 'TV'},
+    { name: 'explore', label: 'Explore' },
+    { name: 'tv', label: 'TV' },
   ];
+  const colorScheme = useColorScheme();
+  const [theme, setTheme] = useState(colorScheme);
+
+  console.log(theme);
+  useEffect(() => {
+    setTheme(colorScheme);
+  }, [colorScheme]);
+
+  let THEME_TYPE = theme === 'dark' ? darkColors : lightColors;
+
+  const styles = useDrawerStyles(THEME_TYPE);
 
   return (
     <SpatialNavigationRoot isActive={isMenuOpen}>
-      <DrawerContentScrollView {...props} style={styles.container} scrollEnabled={false} contentContainerStyle={{
-          ...(Platform.OS === "ios" &&
-            Platform.isTV && { paddingStart: 0, paddingEnd: 0, paddingTop: 0 }),
-        }}>
+      <DrawerContentScrollView
+        {...props}
+        style={styles.container}
+        scrollEnabled={false}
+        contentContainerStyle={{
+          ...(Platform.OS === 'ios' && Platform.isTV && { paddingStart: 0, paddingEnd: 0, paddingTop: 0 }),
+        }}
+      >
         <View style={styles.header}>
           <Image source={require('@/assets/images/logo.png')} style={styles.profilePic} />
           <Text style={styles.userName}>Pioneer Tom</Text>
           <Text style={styles.switchAccount}>Switch account</Text>
         </View>
-        {drawerItems.map((item, index) => (
-         index === 0 ? (
-          <DefaultFocus key={index}>
-            <SpatialNavigationFocusableView onSelect={() => { console.log(item.name); toggleMenu(false); router.push(item.name); }}>
+        {drawerItems.map((item, index) =>
+          index === 0 ? (
+            <DefaultFocus key={index}>
+              <SpatialNavigationFocusableView
+                onSelect={() => {
+                  console.log(item.name);
+                  toggleMenu(false);
+                  router.push(item.name);
+                }}
+              >
+                {({ isFocused }) => (
+                  <View style={[styles.menuItem, isFocused && styles.menuItemFocused]}>
+                    <Text style={[styles.menuText, isFocused && styles.menuTextFocused]}>{item.label}</Text>
+                  </View>
+                )}
+              </SpatialNavigationFocusableView>
+            </DefaultFocus>
+          ) : (
+            <SpatialNavigationFocusableView
+              key={index}
+              onSelect={() => {
+                console.log(item.name);
+                toggleMenu(false);
+                router.push(item.name);
+              }}
+            >
               {({ isFocused }) => (
                 <View style={[styles.menuItem, isFocused && styles.menuItemFocused]}>
                   <Text style={[styles.menuText, isFocused && styles.menuTextFocused]}>{item.label}</Text>
                 </View>
               )}
             </SpatialNavigationFocusableView>
-          </DefaultFocus>
-        ) : (
-          <SpatialNavigationFocusableView key={index} onSelect={() => { console.log(item.name); toggleMenu(false);  router.push(item.name); }}>
-            {({ isFocused }) => (
-              <View style={[styles.menuItem, isFocused && styles.menuItemFocused]}>
-                <Text style={[styles.menuText, isFocused && styles.menuTextFocused]}>{item.label}</Text>
-              </View>
-            )}
-          </SpatialNavigationFocusableView>
-        )
-      ))}
+          ),
+        )}
       </DrawerContentScrollView>
     </SpatialNavigationRoot>
   );
 }
 
-const useDrawerStyles = function () {
+const useDrawerStyles = function (THEME_TYPE) {
   return StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      //backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      backgroundColor: THEME_TYPE.background,
+      opacity: 0.8,
       paddingTop: scaledPixels(20),
     },
     header: {
@@ -70,7 +103,7 @@ const useDrawerStyles = function () {
       borderRadius: scaledPixels(20),
     },
     userName: {
-      color: 'white',
+      color: THEME_TYPE.text,
       fontSize: scaledPixels(32),
       marginTop: scaledPixels(16),
     },
@@ -79,7 +112,8 @@ const useDrawerStyles = function () {
       fontSize: scaledPixels(20),
     },
     searchContainer: {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      //backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      backgroundColor: THEME_TYPE.focusedBg,
       padding: scaledPixels(12),
       marginHorizontal: scaledPixels(16),
       marginVertical: scaledPixels(8),
@@ -94,9 +128,12 @@ const useDrawerStyles = function () {
       paddingTop: scaledPixels(16),
       paddingBottom: scaledPixels(8),
       paddingStart: scaledPixels(32),
+      backgroundColor: THEME_TYPE.background,
+      color: THEME_TYPE.focusedText,
     },
     menuItemFocused: {
-      backgroundColor: 'white',
+      backgroundColor: THEME_TYPE.focusedBg,
+      color: THEME_TYPE.focusedText,
     },
     icon: {
       width: scaledPixels(24),
@@ -104,11 +141,11 @@ const useDrawerStyles = function () {
       marginRight: scaledPixels(16),
     },
     menuText: {
-      color: 'white',
+      color: THEME_TYPE.text,
       fontSize: scaledPixels(32),
     },
     menuTextFocused: {
-      color: 'black',
+      color: THEME_TYPE.focusedText,
     },
   });
 };

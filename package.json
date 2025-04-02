@@ -3,7 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "EXPO_TV=1 expo start",
+    "start": "EXPO_TV=1 expo start --no-dev --minify",
     "android": "EXPO_TV=1 expo run:android",
     "ios": "EXPO_TV=1 expo run:ios",
     "web": "expo start --web",
@@ -38,6 +38,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "npm:react-native-tvos@~0.74.2-0",
+    "react-native-appearance": "^0.3.4",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-keyevent": "^0.3.2",
     "react-native-reanimated": "~3.10.1",

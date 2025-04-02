@@ -1,5 +1,5 @@
 import { useNavigation } from 'expo-router';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
@@ -9,17 +9,29 @@ import { DrawerActions } from '@react-navigation/native';
 import { useMenuContext } from '../../components/MenuContext';
 import CustomDrawerContent from '@/components/CustomDrawerContent';
 import { scaledPixels } from '@/hooks/useScale';
+import { lightColors, darkColors } from '@/theme/colors';
+import { useColorScheme } from 'react-native';
 
 export default function DrawerLayout() {
-  const styles = useDrawerStyles();
   const { isOpen: isMenuOpen, toggleMenu } = useMenuContext();
   const navigation = useNavigation();
+  const colorScheme = useColorScheme();
+  const [theme, setTheme] = useState(colorScheme);
+
+  console.log(theme);
+  useEffect(() => {
+    setTheme(colorScheme);
+  }, [colorScheme]);
+
+  let THEME_TYPE = theme === 'dark' ? darkColors : lightColors;
+
+  const styles = useDrawerStyles(THEME_TYPE);
 
   console.log('isMenuOpen:', isMenuOpen);
 
   const onDirectionHandledWithoutMovement = useCallback(
     (movement: Direction) => {
-      console.log("Direction " + movement);
+      console.log('Direction ' + movement);
       if (movement === 'right') {
         navigation.dispatch(DrawerActions.closeDrawer());
         toggleMenu(false);
@@ -32,18 +44,20 @@ export default function DrawerLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SpatialNavigationRoot
         isActive={isMenuOpen}
-        onDirectionHandledWithoutMovement={onDirectionHandledWithoutMovement}>
-        <Drawer 
-          drawerContent={CustomDrawerContent} 
+        onDirectionHandledWithoutMovement={onDirectionHandledWithoutMovement}
+      >
+        <Drawer
+          drawerContent={CustomDrawerContent}
           defaultStatus="open"
           screenOptions={{
             headerShown: false,
-            drawerActiveBackgroundColor: '#3498db', // Changed to a blue color
+            drawerActiveBackgroundColor: THEME_TYPE.background,
             drawerActiveTintColor: '#ffffff',
             drawerInactiveTintColor: '#bdc3c7',
             drawerStyle: styles.drawerStyle,
             drawerLabelStyle: styles.drawerLabelStyle,
-          }}>
+          }}
+        >
           <Drawer.Screen
             name="index"
             options={{
@@ -71,11 +85,11 @@ export default function DrawerLayout() {
   );
 }
 
-const useDrawerStyles = function () {
+const useDrawerStyles = function (THEME_TYPE) {
   return StyleSheet.create({
     drawerStyle: {
       width: scaledPixels(300),
-      backgroundColor: '#2c3e50', // Dark blue background
+      backgroundColor: THEME_TYPE.background,
       paddingTop: scaledPixels(0), // Add some top padding
     },
     drawerLabelStyle: {
